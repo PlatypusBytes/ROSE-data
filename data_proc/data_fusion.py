@@ -195,7 +195,8 @@ def filter_data_sets(sensar_dict: Dict, fugro_dict: Dict ,ricardo_dict: Dict,dat
     return sensar_dict, fugro_dict, ricardo_dict
 
 
-def plot_data_on_sos_segment(sos_dict, sensar_dict, fugro_dict, ricardo_dict, output_folder="./"):
+def plot_data_on_sos_segment(sos_dict, sensar_dict, fugro_dict, ricardo_dict,
+                             ricardo_signal_type="acceleration", output_folder="./"):
     """
     Plots data from sensar, fugro and ricardo within each SOS segment in a separate subplot.
 
@@ -203,6 +204,8 @@ def plot_data_on_sos_segment(sos_dict, sensar_dict, fugro_dict, ricardo_dict, ou
     :param sensar_dict: Sensar data
     :param fugro_dict: Fugro rila data
     :param ricardo_dict: Ricardo data
+    :param ricardo_signal_type: type of ricardo signal to plot (acceleration, velocity, displacement)
+    :param output_folder: output folder
     :return:
     """
 
@@ -261,8 +264,7 @@ def plot_data_on_sos_segment(sos_dict, sensar_dict, fugro_dict, ricardo_dict, ou
             ricardo.plot_train_velocity(ricardo_data_within_bounds, fig=fig, position=322)
             plt.grid()
 
-            # plot either ricardo acceleration measurements or transformed velocity
-            ricardo_signal_type = "acceleration"
+            # plot either ricardo acceleration measurements or transformed velocity or transformed displacement
             if ricardo_signal_type == "acceleration":
                 ricardo.plot_acceleration_signal(ricardo_data_within_bounds["time"], acc, fig=fig, position=324)
                 plt.grid()
@@ -272,6 +274,11 @@ def plot_data_on_sos_segment(sos_dict, sensar_dict, fugro_dict, ricardo_dict, ou
                 ricardo.plot_velocity_signal(ricardo_data_within_bounds["time"], acc, fig=fig, position=324)
                 plt.grid()
                 ricardo.plot_fft_velocity_signal(ricardo_data_within_bounds,acc, 10,fig=fig, position=326)
+                plt.grid()
+            elif ricardo_signal_type == "displacement":
+                ricardo.plot_displacement_signal(ricardo_data_within_bounds["time"], acc, fig=fig, position=324)
+                plt.grid()
+                ricardo.plot_fft_displacement_signal(ricardo_data_within_bounds,acc, 10,fig=fig, position=326)
                 plt.grid()
 
         fig.suptitle(name)
@@ -331,43 +338,26 @@ def plot_fugro_colour_plot_per_segment(sos_dict,fugro_dict):
 
 
 if __name__ == '__main__':
-    import cProfile
 
-    sos_fn = "../data_proc/SOS.json"
+    sos_fn = "./data_proc/SOS.json"
     with open(sos_fn, 'r') as f:
         sos_data = json.load(f)
 
-    sensar_data = sensar.load_sensar_data("../data/Sensar/processed/processed_settlements_2.pickle")
-
-    fugro_data = fugro.load_rila_data(r"../data/Fugro/updated_rila_data.pickle")
+    # load datasets
+    sensar_data = sensar.load_sensar_data("./data/Sensar/processed/processed_settlements_2.pickle")
+    fugro_data = fugro.load_rila_data(r"./data/Fugro/updated_rila_data.pickle")
     # fugro_data = fugro.merge_data(fugro_data)
+    ricardo_data = ricardo.load_inframon_data("./data/Ricardo/inframon.pickle")
 
-
-    # #plot fugro track
-    # i = 2
-    # plt.plot(fugro_data['data'][i]["coordinates"][:, 0], fugro_data['data'][i]["coordinates"][:, 1], 'o')
-    # plt.plot(fugro_data['data'][i]["coordinates"][:, 0], fugro_data['data'][i]["coordinates"][:, 1])
-    # # plt.show()
-    #
-    # i = 0
-    # plt.plot(fugro_data['data'][i]["coordinates"][:, 0], fugro_data['data'][i]["coordinates"][:, 1], 'o')
-    # plt.plot(fugro_data['data'][i]["coordinates"][:, 0], fugro_data['data'][i]["coordinates"][:, 1])
-    # plt.show()
-
-    ricardo_data = ricardo.load_inframon_data("./inframon.pickle")
-
-    crossing_fn = r"D:\software_development\rose\data\data_discontinuities\kruising.json"
-    wissels_fn = r"D:\software_development\rose\data\data_discontinuities\wissel.json"
-    overweg_fn = r"D:\software_development\rose\data\data_discontinuities\overweg.json"
+    crossing_fn = "./data/data_discontinuities/kruising.json"
+    wissels_fn = "./data/data_discontinuities/wissel.json"
+    overweg_fn = "./data/data_discontinuities/overweg.json"
 
     data_discontinuities_fns = [crossing_fn, wissels_fn, overweg_fn]
-
+    # filter data sets on data discontinuities
     # sensar_data, fugro_data, ricardo_data = filter_data_sets(sensar_data, fugro_data, ricardo_data, data_discontinuities_fns)
 
     # sensar_vs_ricardo(sos_data,sensar_data, ricardo_data["Jan"])
-
     # plot_fugro_colour_plot_per_segment(sos_data, fugro_data)
 
-    # cProfile.run('plot_data_on_sos_segment(sos_data, sensar_data, fugro_data, ricardo_data["Jan"],0)', 'data_fusion_profiler')
-    #
-    plot_data_on_sos_segment(sos_data, sensar_data, fugro_data, ricardo_data["Jan"], output_folder="tmp2")
+    plot_data_on_sos_segment(sos_data, sensar_data, fugro_data, ricardo_data["Jan"], output_folder="tmp")
