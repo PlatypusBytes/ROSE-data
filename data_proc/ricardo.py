@@ -9,8 +9,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.spatial import KDTree
 
-import data_proc.smooth as smooth
 from SignalProcessing.signal_tools import Signal
+import smooth
 
 settings_filter = {"FS": 250,
                    "cut-off": 30,
@@ -64,6 +64,37 @@ def plot_train_velocity(data: Dict, fig=None, position=111):
         ax.plot(data["time"], data["speed"])
         ax.set_xlabel("Time [s]")
         ax.set_ylabel("Train velocity [km/u]")
+
+    return fig, ax
+
+def plot_displacement_signal(time, acceleration, fig=None, position=111):
+    """
+    Integrates acceleration to velocity and plots a time series of the axle velocity time series
+
+    :param time: time array
+    :param acceleration:  acceleration array
+    :param fig: optional existing figure
+    :param position: position in subplot
+    :return:
+    """
+
+    # integrations acceleration signal to velocity signal
+    signal = Signal(time, acceleration)
+    signal.integrate(hp=True,moving=False, baseline=False, ini_cond=False)
+    signal.integrate(hp=True,moving=False, baseline=False, ini_cond=False)
+
+    velocity = np.copy(signal.signal)
+
+    # initialises figure if it does not exists
+    if fig is None:
+        fig = plt.figure()
+    ax = fig.add_subplot(position)
+
+    # plots time series
+    if time.size > 0:
+        ax.plot(time, velocity)
+        ax.set_xlabel("Time [s]")
+        ax.set_ylabel("Axle displacement [$\mathregular{m}$]")
 
     return fig, ax
 
@@ -150,6 +181,38 @@ def plot_fft_acceleration_signal(data, acceleration, smoothing_distance,fig=None
 
     return fig, ax
 
+
+
+def plot_fft_displacement_signal(data, acceleration, smoothing_distance, fig=None, position=111):
+    m_to_mm = 1e3
+
+    time = data["time"]
+
+    # integrations acceleration signal to velocity signal
+    signal = Signal(time, acceleration,FS=settings_filter["FS"])
+    signal.integrate(hp=True,moving=False, baseline=False, ini_cond=False)
+    signal.integrate(hp=True,moving=False, baseline=False, ini_cond=False)
+
+    # perform a fft on velocity signal
+    signal.fft(half_representation=True)
+    freq = signal.frequency
+    ampl = signal.amplitude
+
+    # smooth signal
+    ampl = smooth_signal_within_bounds_over_wave_length(data, smoothing_distance, ampl)
+
+    # initialises figure if it does not exists
+    if fig is None:
+        fig = plt.figure()
+    ax = fig.add_subplot(position)
+
+    # plots time series
+    if time.size > 0:
+        ax.plot(freq, ampl * m_to_mm)
+        ax.set_xlabel("Frequency [Hz]")
+        ax.set_ylabel("Axle displacement amplitude [$\mathregular{mm/s/Hz}$]")
+
+    return fig, ax
 
 def plot_fft_velocity_signal(data, acceleration, smoothing_distance, fig=None, position=111):
     m_to_mm = 1e3
@@ -280,12 +343,8 @@ def read_inframon(file_names: List, output_f: str):
         results[name]["segment"] = segment
 
     # write results to pickle
-    if output_f.endswith("pickle"):
-        with open(output_f, "wb") as f:
-            pickle.dump(results, f)
-    else:
-        with open(output_f + "pickle", "wb") as f:
-            pickle.dump(results, f)
+    with open(output_f, "wb") as f:
+        pickle.dump(results, f)
 
     return results
 
@@ -363,10 +422,10 @@ def filter_data_within_bounds(xbounds: np.ndarray, ybounds: np.ndarray, data: Di
 
 
 if __name__ == '__main__':
-    filenames = [r"../data/Ricardo/Jan.json",
-                 r"../data/Ricardo/Jun.json",
+    filenames = [r"./data/Ricardo/Jan.json",
+                 r"./data/Ricardo/Jun.json",
                  ]
-    read_inframon(filenames, "./")
+    read_inframon(filenames, "./inframon.pickle")
 
     ricardo_data = load_inframon_data("./inframon.pickle")
     # plot_speed(ricardo_data["Jun"])
