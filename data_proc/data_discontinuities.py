@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 
+
 def get_bounds_of_lines(all_coordinates):
     """
     gets x-bounds and y-bounds of all entries
@@ -36,6 +37,7 @@ def get_bounds_of_lines(all_coordinates):
 
     return x_bounds, y_bounds
 
+
 def get_coordinates_from_json(filename):
     """
     Gets coordinates from discontinuity json file
@@ -53,11 +55,9 @@ def get_coordinates_from_json(filename):
         return all_coordinates
 
 
-
-
 if __name__ == '__main__':
 
-    fn = r"D:\software_development\rose\data\data_discontinuities\wissel.json"
+    fn = r"./data/data_discontinuities/wissel.json"
 
     all_coordinates = get_coordinates_from_json(fn)
     x_bounds, y_bounds = get_bounds_of_lines(all_coordinates)
@@ -69,14 +69,3 @@ if __name__ == '__main__':
     plt.plot(np.array(all_coordinates[i][2])[:, 0], np.array(all_coordinates[i][2])[:, 1], marker='v')
 
     plt.show()
-    # with open(fn) as json_file:
-    #     data = json.load(json_file)
-    #
-    #     a=1+1
-    #
-    # # json.load()
-    #
-    # # fn  = r"D:\software_development\rose\data\data_discontinuities\overweg.gpkg"
-    # fn = r"D:\software_development\rose\data\data_discontinuities\kruising_4.gpkg"
-    # read_kruising_geopackage(fn)
-    # pass
