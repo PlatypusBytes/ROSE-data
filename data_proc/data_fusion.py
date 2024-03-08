@@ -7,14 +7,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 
+from SignalProcessing.window import Window
+from SignalProcessing.signal_tools import Signal
+
+# local imports
 import sensar
 import fugro
 import ricardo
 import SoS
 import data_discontinuities as dd
 import smooth
-from SignalProcessing.window import Window
-from SignalProcessing.signal_tools import Signal
+
 
 settings_filter = {"FS": 250,
                    "cut-off": 120,
