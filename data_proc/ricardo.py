@@ -425,9 +425,9 @@ if __name__ == '__main__':
     filenames = [r"./data/Ricardo/Jan.json",
                  r"./data/Ricardo/Jun.json",
                  ]
-    read_inframon(filenames, "./inframon.pickle")
+    read_inframon(filenames, "./inframon_data.pickle")
 
-    ricardo_data = load_inframon_data("./inframon.pickle")
+    ricardo_data = load_inframon_data("./inframon_data.pickle")
     # plot_speed(ricardo_data["Jun"])
 
     xlim = [128326, 128410]

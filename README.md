@@ -49,7 +49,7 @@ from data_proc.ricardo import read_inframon
 filenames = [r"./data/Ricardo/Jan.json",
                 r"./data/Ricardo/Jun.json",
                 ]
-read_inframon(filenames, "./inframon.pickle")
+read_inframon(filenames, "./inframon_data.pickle")
 ```
 
 ## SoS
