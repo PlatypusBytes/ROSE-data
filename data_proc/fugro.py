@@ -987,7 +987,7 @@ if __name__ == '__main__':
     # res = get_data_at_location(dir, location="all", filetype="KRDZ")
     # res = merge_data(res)
     res = get_data_at_location(r"data/Fugro/Amsterdam-Eindhoven TKI Project", location="all")
-    save_fugro_data(res, r"./data/Fugro/updated_rila_data.pickle")
+    save_fugro_data(res, r"./rila_data.pickle")
     res = load_rila_data(r"./rila_data.pickle")
 
 
