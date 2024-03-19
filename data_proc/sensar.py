@@ -592,10 +592,8 @@ def plot_old_and_new_dataset(old_sensar, new_sensar,sos_dict):
 
 
 if __name__ == '__main__':
-
-    import json
-    data = read_geopackage(r"../data/Sensar/20190047_02_20210630\data/data.gpkg")
-    save_sensar_data(data, "../data/Sensar/processed/processed_settlements_2.pickle")
+    data = read_geopackage(r"./data/Sensar/20190047_02_20210630/data/data.gpkg")
+    save_sensar_data(data, "./sensar.pickle")
     # #
     # old_data = load_sensar_data("../data/Sensar/processed/processed_settlements.pickle")
     # new_data = load_sensar_data("../data/Sensar/processed/processed_settlements_2.pickle")

@@ -18,7 +18,7 @@ from typing import List, Dict
 
 from SignalProcessing.signal_tools import Signal
 
-import data_proc.SoS as SoS
+from data_proc import SoS
 
 
 def plot_data_colormesh(dates: np.ndarray, chainage: np.ndarray, data: np.ndarray, data_type: str, fig=None,position=111):
@@ -198,7 +198,7 @@ def __filter_without_boundary_effects(data, fs, Fpass_high, Fpass_low):
     """
 
     signal = Signal(np.zeros(len(data)),data,FS=fs)
-    signal.filter(Fpass_high,4, type_filter="highpass")
+    signal.filter(Fpass_high, 4, type_filter="highpass")
     signal.filter(Fpass_low, 2, type_filter="lowpass")
 
     flipped_signal = Signal(np.zeros(len(data)),np.flip(data),FS=fs)
@@ -611,8 +611,8 @@ def get_data_at_location(file_dir, location: str ="all", filetype: str ='csv') -
                 res["dates"].append(datetime.strptime(date_match.group(), "%Y-%m-%d"))
                 res["data"].append(read_rila_data_from_krdz(Path(path,file)))
             if filetype == "csv" and file.endswith("csv"):
-                date_match = re.search(r'\d{4}-\d{2}-\d{2}', file)
-                res["dates"].append(datetime.strptime(date_match.group(), "%Y-%m-%d"))
+                date_match = re.search(r'\d{4}\d{2}', file)
+                res["dates"].append(datetime.strptime(date_match.group(), "%Y%m"))
                 res["data"].append(read_rila_data_from_csv(Path(path,file)))
 
     # # add data from all desired files to dictionary
@@ -983,12 +983,14 @@ if __name__ == '__main__':
 
     # read_rila_data_from_krdz(filename)
     # res = read_rila_data_from_csv(filename)
-    # dir = r"D:\software_development\rose\data\Fugro\AMS-to-EIN"
+    # dir = r".\data\Fugro\AMS-to-EIN"
     # res = get_data_at_location(dir, location="all", filetype="KRDZ")
     # res = merge_data(res)
-    # res = get_data_at_location(r"..\data\Fugro\Amsterdam-Eindhoven TKI Project", location="all")
-    # save_fugro_data(res, r"..\data\Fugro\updated_rila_data.pickle")
-    res = load_rila_data(r"..\data\Fugro\rila_data.pickle")
+    res = get_data_at_location(r"data/Fugro/Amsterdam-Eindhoven TKI Project", location="all")
+    save_fugro_data(res, r"./data/Fugro/updated_rila_data.pickle")
+    res = load_rila_data(r"./rila_data.pickle")
+
+
 
 
     calculate_d_values(res['data'][0]['heights'], res['data'][0]['coordinates'])

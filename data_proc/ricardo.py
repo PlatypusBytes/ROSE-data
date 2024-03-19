@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from scipy.spatial import KDTree
 
 from SignalProcessing.signal_tools import Signal
-import smooth
+from data_proc import smooth
 
 settings_filter = {"FS": 250,
                    "cut-off": 30,
