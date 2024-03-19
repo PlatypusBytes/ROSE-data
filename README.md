@@ -24,8 +24,6 @@ data = read_geopackage(r"./data/Sensar/20190047_02_20210630/data/data.gpkg")
 save_sensar_data(data, "./insar_data.pickle")
 ```
 
-
-
 ## RILA
 To process the RILA dataset you can use [fugro.py](/data_proc/fugro.py).
 This script will process the RILA dataset and output a pickle file with the processed data.
