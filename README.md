@@ -21,7 +21,7 @@ Alternatively, you can use the following code to process the InSAR dataset:
 from data_proc.sensar import read_geopackage, save_sensar_data
 
 data = read_geopackage(r"./data/Sensar/20190047_02_20210630/data/data.gpkg")
-save_sensar_data(data, "./sensar.pickle")
+save_sensar_data(data, "./insar_data.pickle")
 ```
 
 
